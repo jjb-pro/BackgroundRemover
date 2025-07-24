@@ -2,8 +2,6 @@
 
 **Background Remover** is an open-source Paint.NET plugin that automatically removes backgrounds from your images using state-of-the-art machine learning models—all running locally with no internet connection required.
 
-![Plugin configuration dialog in Paint.NET](https://media.invisioncic.com/r125076/monthly_2025_07/preview.webp.26cad53f49446d5f950c28c01e5c78fe.webp)
-
 ## Features
 
 -   **ML-powered Background Removal** – Uses ONNX models for high-quality, accurate background removal
