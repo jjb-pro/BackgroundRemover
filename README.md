@@ -20,7 +20,8 @@ This project is discussed in detail in the forum thread: [Background Remover —
 Please **download the plugin along with required ONNX models** from the official link:  
 [https://aka.jjb-pro.com/pdn-bgrem/download](https://aka.jjb-pro.com/pdn-bgrem/download)
 
-> ⚠️ The GitHub repository does **not** include the model files due to their size.
+> [!WARNING]  
+> The GitHub repository does **not** include the model files due to their size.
 
 ## Getting Started
 
