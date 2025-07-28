@@ -100,8 +100,9 @@
 	  </None>
 	</ItemGroup>
 
-<PropertyGroup>
-  <PostBuildEvent>
-		xcopy /Y /Q /S /I "$(OutDir)*" "$(PdnRoot)\Effects\BackgroundRemover"
-  </PostBuildEvent>
+	<PropertyGroup>
+		<PostBuildEvent>
+			xcopy /Y /Q /S /I "$(OutDir)*" "$(PdnRoot)\Effects\BackgroundRemover"
+		</PostBuildEvent>
+	</PropertyGroup>
 </Project>
