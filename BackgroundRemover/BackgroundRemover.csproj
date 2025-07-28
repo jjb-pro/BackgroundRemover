@@ -18,7 +18,8 @@
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<Deterministic>False</Deterministic>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 	
 	<PropertyGroup>
@@ -98,4 +99,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
+
+<PropertyGroup>
+  <PostBuildEvent>
+		xcopy /Y /Q /S /I "$(OutDir)*" "$(PdnRoot)\Effects\BackgroundRemover"
+  </PostBuildEvent>
 </Project>
