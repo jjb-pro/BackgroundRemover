@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BackgroundRemover.Effects;
@@ -41,7 +42,7 @@ public class BackgroundRemoverEffect : PropertyBasedBitmapEffect
         }
     }
 
-    public BackgroundRemoverEffect() : base("Background Remover", Icon, SubmenuNames.Photo, BitmapEffectOptionsFactory.Create() with { IsConfigurable = true })
+    public BackgroundRemoverEffect() : base("Background Removal", Icon, SubmenuNames.Photo, BitmapEffectOptionsFactory.Create() with { IsConfigurable = true })
     {
         var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
         _onnxPathFp16 = Path.Combine(baseDir, "onnx", ONNX16FileName);
@@ -125,8 +126,8 @@ public class BackgroundRemoverEffect : PropertyBasedBitmapEffect
         try
         {
             using var session = new InferenceSession(onnx, sessionOptions);
-            using var task = session.RunAsync(runOptions, session.InputNames, [vcolor], session.OutputNames, [valpha]);
 
+            var task = Task.Run(() => session.Run(runOptions, session.InputNames, [vcolor], session.OutputNames, [valpha]));
             while (!task.IsCompleted)
             {
                 runOptions.Terminate = IsCancelRequested;
