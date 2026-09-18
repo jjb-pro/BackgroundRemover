@@ -1,3 +1,11 @@
 <Solution>
-	<Project Path="BackgroundRemover\BackgroundRemover.csproj" />
+  <Folder Name="/docs/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/scripts/">
+    <File Path="scripts/Open to install.bat" />
+    <File Path="scripts/installer.ps1" />
+    <File Path="scripts/package.ps1" />
+  </Folder>
+  <Project Path="src/BackgroundRemover.csproj" />
 </Solution>

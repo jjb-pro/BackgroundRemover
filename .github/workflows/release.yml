@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Paint.NET
+        shell: pwsh
+        run: |
+          winget source update
+          winget install --id dotPDN.PaintDotNet --silent --scope machine `
+            --accept-package-agreements --accept-source-agreements
+
+      - name: Verify Paint.NET install location
+        shell: pwsh
+        run: |
+          $pdnCore = "C:\Program Files\paint.net\PaintDotNet.Core.dll"
+          if (-not (Test-Path $pdnCore)) {
+            Write-Error "Paint.NET wasn't found at 'C:\Program Files\paint.net' after winget install (got installed per-user instead of machine-wide?). The csproj's <PdnRoot> assumes this path."
+            exit 1
+          }
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Determine version
+        id: version
+        shell: pwsh
+        run: |
+          if ("${{ github.ref_type }}" -eq "tag") {
+            $version = "${{ github.ref_name }}".TrimStart("v")
+          } else {
+            [xml]$proj = Get-Content src/BackgroundRemover.csproj
+            $version = (Select-Xml -Xml $proj -XPath "//Project/PropertyGroup/Version").Node.InnerText
+          }
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Build and package
+        id: package
+        shell: pwsh
+        run: |
+          $zipPath = & ./scripts/package.ps1 -Version "${{ steps.version.outputs.version }}"
+          "zipPath=$zipPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BackgroundRemover-${{ steps.version.outputs.version }}
+          path: ${{ steps.package.outputs.zipPath }}
+
+      - name: Create GitHub release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: v${{ steps.version.outputs.version }}
+          files: ${{ steps.package.outputs.zipPath }}
+          generate_release_notes: true

@@ -1,36 +1,52 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<!-- Set this to the location where you have Paint.NET installed. If you have the Microsoft
-         Store version, you should download the portable version and point this at that. -->
-		<PdnRoot>C:\Program Files\paint.net</PdnRoot>
-	</PropertyGroup>
-	
+
 	<PropertyGroup>
 		<TargetFramework>net9.0-windows</TargetFramework>
-		<RootNamespace>BackgroundRemover</RootNamespace>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-		<UseWindowsForms>true</UseWindowsForms>
-		<UseWPF>true</UseWPF>
-		<!-- This is necessary so that the build copies the version of nuget packages we're referencing,
+		<!-- enable field keyword -->
+		<LangVersion>preview</LangVersion>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Authors>jjb</Authors>
+		<Company>$(Authors)</Company>
+		<Product>Background Remover</Product>
+		<Description>Background Remover</Description>
+		<Version>1.2.0.0</Version>
+		<NeutralLanguage>en</NeutralLanguage>
+		<Copyright>Copyright © $([System.DateTime]::Now.Year) $(Authors)</Copyright>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+	</PropertyGroup>
+	
+	<!-- paint.net dependencies -->
+	<!-- This is necessary so that the build copies the version of nuget packages we're referencing,
          instead of copying the ones that Paint.NET is using (which may be trimmed and/or a different version) -->
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	<PropertyGroup>
+		<ImportWindowsDesktopTargets>True</ImportWindowsDesktopTargets>
+		<UseWindowsForms>True</UseWindowsForms>
+		<CopyLocalLockFileAssemblies>True</CopyLocalLockFileAssemblies>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<Deterministic>False</Deterministic>
-		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
-	
+
 	<PropertyGroup>
 		<!-- MSB3277 removes the harmless and unhelpful warning about assembly version "conflicts" (e.g. System.Runtime.Serialization.Formatters) -->
 		<NoWarn>1701;1702;CS7035;MSB3277</NoWarn>
 	</PropertyGroup>
 	
-	<ItemGroup>
-		<EmbeddedResource Include="Assets\ic_fluent_video_background_effect_24_filled.ico" />
-	</ItemGroup>
-	
+	<PropertyGroup>
+		<PdnRoot>C:\Program Files\paint.net</PdnRoot>
+	</PropertyGroup>
+
+	<!-- copy to paint.net effects directory -->
+	<PropertyGroup>
+		<PostBuildEvent>
+			xcopy /Y /Q /S /I "$(OutDir)*" "$(PdnRoot)\Effects\BackgroundRemover"
+		</PostBuildEvent>
+	</PropertyGroup>
+		
 	<ItemGroup>
 		<Reference Include="PaintDotNet.Base">
 			<HintPath>$(PdnRoot)\PaintDotNet.Base.dll</HintPath>
@@ -80,29 +96,38 @@
 			<HintPath>$(PdnRoot)\PaintDotNet.Windows.Framework.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
-			<Reference Include="PaintDotNet.ObjectModel">
+		<Reference Include="PaintDotNet.ObjectModel">
 			<HintPath>$(PdnRoot)\PaintDotNet.ObjectModel.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 	</ItemGroup>
-	
+
+	<!-- assets/localization -->
 	<ItemGroup>
-		<PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.22.1" />
-		<PackageReference Include="System.Drawing.Common" Version="9.0.7" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <None Update="onnx\RMBG-2.0_FP16.onnx">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="onnx\RMBG-2.0_FP32.onnx">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Remove="Assets\ic_fluent_video_background_effect_24_filled.ico" />
 	</ItemGroup>
 
-	<PropertyGroup>
-		<PostBuildEvent>
-			xcopy /Y /Q /S /I "$(OutDir)*" "$(PdnRoot)\Effects\BackgroundRemover"
-		</PostBuildEvent>
-	</PropertyGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Assets\ic_fluent_video_background_effect_24_filled.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.24.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Assets\Localization\strings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Assets\Localization\Strings.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>strings.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
 </Project>
