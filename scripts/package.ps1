@@ -16,6 +16,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+$OutputDirectory = [System.IO.Path]::GetFullPath($OutputDirectory)
+
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $csproj = Join-Path $repoRoot "src\BackgroundRemover.csproj"
 
